@@ -43,9 +43,8 @@ docs/_build/
 # local vim settings
 .lvimrc
 .session
+tags
 
 # mac stuff
 .DS_Store
 
-# vim session
-.session
