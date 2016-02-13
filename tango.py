@@ -2,6 +2,8 @@ from __future__ import print_function
 import time
 import subprocess
 import click
+import hashlib
+from collections import defaultdict
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
@@ -22,9 +24,20 @@ class FileDaemon(PatternMatchingEventHandler):
         self.watched_dir = watched_dir
         self.runner = runner
         self.interval = interval
+        self._cache = defaultdict(str)
+
+    def _hashcode(self, path):
+        content = open(path).read()
+        hashcode = hashlib.md5(content.encode('utf-8')).hexdigest()
+        return hashcode
 
     def on_created(self, event):
         print('{} {} {}'.format(self.runner, event.src_path, event.event_type))
+
+        if self._cache[event.src_path] == self._hashcode(event.src_path):
+            return
+
+        self._cache[event.src_path] = self._hashcode(event.src_path)
         self.runner.execute(self.watched_dir)
 
     def init(self):
