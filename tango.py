@@ -1,14 +1,14 @@
 from __future__ import print_function
-import sys
 import time
 import subprocess
+import click
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
 
 class Runner:
 
-    def __init__(self, tool='py.test'):
+    def __init__(self, tool):
         self.tool = tool
 
     def execute(self, directory='.'):
@@ -40,8 +40,13 @@ class FileDaemon(PatternMatchingEventHandler):
             observer.stop()
         observer.join()
 
-if __name__ == '__main__':
-    tool = sys.argv[1]
-    watched_dir = sys.argv[2]
 
-    FileDaemon(watched_dir, runner=Runner(tool)).init()
+@click.command()
+@click.option('-t', '--test_runner', default='py.test', type=str)
+@click.option('-d', '--directory', default='.', type=str)
+def tango(test_runner, directory):
+    FileDaemon(watched_dir=directory, runner=Runner(tool=test_runner)).init()
+
+
+if __name__ == '__main__':
+    tango()
