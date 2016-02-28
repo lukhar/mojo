@@ -20,7 +20,7 @@ class Runner:
 class FileDaemon(PatternMatchingEventHandler):
 
     def __init__(self, watched_dir, runner, interval=2):
-        super().__init__(ignore_directories=True)
+        super().__init__(ignore_patterns=['*.pyc'], ignore_directories=True)
         self.watched_dir = watched_dir
         self.runner = runner
         self.interval = interval
@@ -32,8 +32,6 @@ class FileDaemon(PatternMatchingEventHandler):
         return hashcode
 
     def on_created(self, event):
-        print('{} {} {}'.format(self.runner, event.src_path, event.event_type))
-
         if self._cache[event.src_path] == self._hashcode(event.src_path):
             return
 
@@ -42,7 +40,7 @@ class FileDaemon(PatternMatchingEventHandler):
 
     def init(self):
         observer = Observer()
-        observer.schedule(self, self.watched_dir)
+        observer.schedule(self, self.watched_dir, recursive=True)
         observer.start()
 
         print('started on: ' + self.watched_dir)
