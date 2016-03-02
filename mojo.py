@@ -20,7 +20,7 @@ class Runner:
 class FileDaemon(PatternMatchingEventHandler):
 
     def __init__(self, watched_dir, runner, interval=2):
-        super().__init__(ignore_patterns=['*.pyc'], ignore_directories=True)
+        super().__init__(ignore_patterns=['*__pycache__*', '*.pyc'], ignore_directories=True)
         self.watched_dir = watched_dir
         self.runner = runner
         self.interval = interval
