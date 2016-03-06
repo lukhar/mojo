@@ -1,0 +1,4 @@
+# main
+click > 6
+future > 0.15
+watchdog > 0.8
