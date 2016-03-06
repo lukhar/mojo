@@ -1,4 +1,5 @@
 from __future__ import print_function
+from builtins import super
 import time
 import subprocess
 import click
@@ -13,7 +14,7 @@ from watchdog.events import PatternMatchingEventHandler
 class Runner:
 
     def __init__(self, tool):
-        if not pkgutil.find_loader(tool):
+        if not pkgutil.find_loader(tool if tool != 'py.test' else 'pytest'):
             sys.exit('{} is not installed on your system.'.format(tool))
         self.tool = tool
 

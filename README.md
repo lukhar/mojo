@@ -22,5 +22,5 @@ In order watch custom directory issue:
 
 # Supported tools
 
-* [nosetests](http://somethingaboutorange.com/mrl/projects/nose/)
-* [py.test](http://codespeak.net/py/dist/test.html)
+* [nosetests](https://nose.readthedocs.org/en/latest/)
+* [py.test](http://pytest.org/latest/)
