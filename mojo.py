@@ -1,5 +1,5 @@
 from __future__ import print_function
-from builtins import super
+from builtins import super, open
 import time
 import subprocess
 import click
@@ -25,16 +25,17 @@ class Runner:
 class FileDaemon(PatternMatchingEventHandler):
 
     def __init__(self, watched_dir, runner, interval=2):
-        super().__init__(ignore_patterns=['*__pycache__*', '*.pyc'], ignore_directories=True)
+        super().__init__(patterns=['*.py'], ignore_directories=True)
         self.watched_dir = watched_dir
         self.runner = runner
         self.interval = interval
         self._cache = defaultdict(str)
 
     def _hashcode(self, path):
-        content = open(path).read()
-        hashcode = hashlib.md5(content.encode('utf-8')).hexdigest()
-        return hashcode
+        with open(path, 'r') as source:
+            content = source.read()
+            hashcode = hashlib.md5(content.encode('utf-8')).hexdigest()
+            return hashcode
 
     def on_created(self, event):
         if self._cache[event.src_path] == self._hashcode(event.src_path):
