@@ -3,6 +3,8 @@ import time
 import subprocess
 import click
 import hashlib
+import pkgutil
+import sys
 from collections import defaultdict
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
@@ -11,6 +13,8 @@ from watchdog.events import PatternMatchingEventHandler
 class Runner:
 
     def __init__(self, tool):
+        if not pkgutil.find_loader(tool):
+            sys.exit('{} is not installed on your system.'.format(tool))
         self.tool = tool
 
     def execute(self, directory='.'):
@@ -53,7 +57,7 @@ class FileDaemon(PatternMatchingEventHandler):
 
 
 @click.command()
-@click.option('-t', '--test_runner', default='py.test', type=str)
+@click.option('-t', '--test_runner', default='py.test', type=click.Choice(['nose', 'py.test']))
 @click.option('-d', '--directory', default='.', type=str)
 def mojo(test_runner, directory):
     FileDaemon(watched_dir=directory, runner=Runner(tool=test_runner)).init()
