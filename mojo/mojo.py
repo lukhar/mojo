@@ -63,7 +63,3 @@ class FileDaemon(PatternMatchingEventHandler):
 @click.option('-d', '--directory', default='.', type=str)
 def mojo(test_runner, directory):
     FileDaemon(watched_dir=directory, runner=Runner(tool=test_runner)).init()
-
-
-if __name__ == '__main__':
-    mojo()
