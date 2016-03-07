@@ -5,10 +5,10 @@ setup(name='mojo',
       packages=find_packages(),
       install_requires=['watchdog', 'click', 'future'],
       license='MIT',
-      version='0.1.1',
+      version='0.1.2',
       description='Continous Test Runner',
       author='Lukasz Haratym',
       author_email='lukasz.har@gmail.com',
       url='https://github.com/lukhar/mojo',
-      download_url='https://github.com/lukhar/mojo/tarball/0.1.1'
+      entry_points={'console_scripts': ['mojo = mojo:main']}
       )
