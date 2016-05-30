@@ -4,21 +4,25 @@ Heavily inspired by `tdaemon` tool which automatically triggers tests on any cha
 
 ## Usage
 
+Install:
+
+    $ pip install git+https://github.com/lukhar/mojo
+
 Run:
 
-    $ python /path/to/mojo.py
+    $ mojo
 
 mojo will start to monitor the current directory and will trigger `py.test` on any change.
 
 To use different testing tool use `-t` parameter:
 
-    $ python /path/to/mojo.py -t nose
+    $ mojo -t nose
 
 Will run your tests using `nosetests` runner.
 
 In order watch custom directory issue:
 
-    $ python /path/to/mojo.py -d /path/to/your/project
+    $ mojo -d /path/to/your/project
 
 # Supported tools
 
