@@ -13,13 +13,17 @@ from watchdog.events import PatternMatchingEventHandler
 
 class Runner:
 
-    def __init__(self, tool):
+    def __init__(self, tool, blacklist):
         if not pkgutil.find_loader(tool if tool != 'py.test' else 'pytest'):
             sys.exit('{} is not installed on your system.'.format(tool))
         self.tool = tool
+        self.blacklist = blacklist
 
     def execute(self, directory='.'):
-        subprocess.call([self.tool, directory])
+        if self.tool == 'py.test' and self.blacklist:
+            subprocess.call([self.tool, directory, '--ignore={}'.format(self.blacklist)])
+        else:
+            subprocess.call([self.tool, directory])
 
 
 class FileDaemon(PatternMatchingEventHandler):
@@ -61,5 +65,6 @@ class FileDaemon(PatternMatchingEventHandler):
 @click.command()
 @click.option('-t', '--test_runner', default='py.test', type=click.Choice(['nose', 'py.test']))
 @click.option('-d', '--directory', default='.', type=str)
-def mojo(test_runner, directory):
-    FileDaemon(watched_dir=directory, runner=Runner(tool=test_runner)).init()
+@click.option('-i', '--ignore', type=str)
+def mojo(test_runner, directory, ignore):
+    FileDaemon(watched_dir=directory, runner=Runner(tool=test_runner, blacklist=ignore)).init()
