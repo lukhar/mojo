@@ -24,6 +24,10 @@ In order watch custom directory issue:
 
     $ mojo -d /path/to/your/project
 
+Ingoring specified directory:
+
+    $ mojo -d /path/to/your/project -i /path/to/your/project/ignored_dir
+
 # Supported tools
 
 * [nosetests](https://nose.readthedocs.org/en/latest/)
