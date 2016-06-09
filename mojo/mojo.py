@@ -1,38 +1,22 @@
 from __future__ import print_function
 from builtins import super, open
 import time
-import subprocess
-import click
 import hashlib
-import pkgutil
-import sys
+import click
 from collections import defaultdict
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
-
-
-class Runner:
-
-    def __init__(self, tool, blacklist):
-        if not pkgutil.find_loader(tool if tool != 'py.test' else 'pytest'):
-            sys.exit('{} is not installed on your system.'.format(tool))
-        self.tool = tool
-        self.blacklist = blacklist
-
-    def execute(self, directory='.'):
-        if self.tool == 'py.test' and self.blacklist:
-            subprocess.call([self.tool, directory, '--ignore={}'.format(self.blacklist)])
-        else:
-            subprocess.call([self.tool, directory])
+from . import runner
 
 
 class FileDaemon(PatternMatchingEventHandler):
 
-    def __init__(self, watched_dir, runner, interval=2):
+    def __init__(self, watched_dir, runner, blacklist=None, interval=2):
         super().__init__(patterns=['*.py'], ignore_directories=True)
         self.watched_dir = watched_dir
         self.runner = runner
         self.interval = interval
+        self.blacklist = blacklist
         self._cache = defaultdict(str)
 
     def _hashcode(self, path):
@@ -46,7 +30,7 @@ class FileDaemon(PatternMatchingEventHandler):
             return
 
         self._cache[event.src_path] = self._hashcode(event.src_path)
-        self.runner.execute(self.watched_dir)
+        self.runner.execute(self.watched_dir, self.blacklist)
 
     def init(self):
         observer = Observer()
@@ -65,6 +49,6 @@ class FileDaemon(PatternMatchingEventHandler):
 @click.command()
 @click.option('-t', '--test_runner', default='py.test', type=click.Choice(['nose', 'py.test']))
 @click.option('-d', '--directory', default='.', type=str)
-@click.option('-i', '--ignore', type=str)
+@click.option('-i', '--ignore', multiple=True, type=click.Path())
 def mojo(test_runner, directory, ignore):
-    FileDaemon(watched_dir=directory, runner=Runner(tool=test_runner, blacklist=ignore)).init()
+    FileDaemon(watched_dir=directory, blacklist=ignore, runner=runner.create(tool=test_runner)).init()
