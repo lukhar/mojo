@@ -1,5 +1,5 @@
-from mojo import mojo
+from . import mojo
 
 
 def main():
-    mojo()
+    mojo.mojo()
