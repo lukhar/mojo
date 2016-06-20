@@ -15,7 +15,7 @@ class Runner(with_metaclass(ABCMeta)):
 class PyTestRunner(Runner):
 
     def execute(self, directory='.', blacklist=None):
-        if blacklist is None:
+        if not blacklist:
             subprocess.call(['py.test', directory])
             return
 
@@ -31,7 +31,7 @@ class NoseTestRunner(Runner):
             print('warning: nose-exclude plugin is required to use -i option with nose.')
 
     def execute(self, directory='.', blacklist=None):
-        if blacklist is None:
+        if not blacklist:
             subprocess.call(['nosetests', directory])
             return
 
